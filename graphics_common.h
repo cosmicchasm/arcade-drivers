@@ -20,7 +20,7 @@
 #define SCREEN_DIV 		 OLED_SCREEN_DIV
 
 /* "Portable" graphic functions (may change with different core headers) */
-__inline void set_fb_pixel(int x, int y, uint8_t const *fb) {
+__inline void set_fb_pixel(int x, int y, uint8_t *const fb) {
   if ((x < 0) || (x >= SCREEN_LIMIT_X) || 
       (y < 0) || (y >= SCREEN_LIMIT_Y)) {
     return;
@@ -29,7 +29,7 @@ __inline void set_fb_pixel(int x, int y, uint8_t const *fb) {
   }
 }
 
-__inline void clr_fb_pixel(int x, int y, uint8_t const *fb) {
+__inline void clr_fb_pixel(int x, int y, uint8_t *const fb) {
   if ((x < 0) || (x >= SCREEN_LIMIT_X) || 
       (y < 0) || (y >= SCREEN_LIMIT_Y)) {
     return;
