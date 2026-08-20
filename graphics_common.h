@@ -17,6 +17,7 @@
 
 #define SCREEN_LIMIT_X OLED_SIZE_W
 #define SCREEN_LIMIT_Y OLED_SIZE_L
+#define SCREEN_DIV 		 OLED_SCREEN_DIV
 
 /* "Portable" graphic functions (may change with different core headers) */
 __inline void set_fb_pixel(int x, int y, uint8_t const *fb) {
