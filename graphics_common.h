@@ -19,22 +19,4 @@
 #define SCREEN_LIMIT_Y OLED_SIZE_L
 #define SCREEN_DIV 		 OLED_SCREEN_DIV
 
-/* "Portable" graphic functions (may change with different core headers) */
-__inline void set_fb_pixel(int x, int y, uint8_t *const fb) {
-  if ((x < 0) || (x >= SCREEN_LIMIT_X) || 
-      (y < 0) || (y >= SCREEN_LIMIT_Y)) {
-    return;
-  } else {
-    fb[BYTE_FROM_XY(x,y)] |= BIT_FROM_XY(x,y);
-  }
-}
-
-__inline void clr_fb_pixel(int x, int y, uint8_t *const fb) {
-  if ((x < 0) || (x >= SCREEN_LIMIT_X) || 
-      (y < 0) || (y >= SCREEN_LIMIT_Y)) {
-    return;
-  } else {
-    fb[BYTE_FROM_XY(x,y)] &= ~BIT_FROM_XY(x,y);
-  }
-}
 #endif
