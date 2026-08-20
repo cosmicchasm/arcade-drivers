@@ -9,8 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "graphics_core.h"
-#include "oled_core.h"
+#include "graphics_common.h"
 
 #define ABS(x)	 ((x) < 0 ? (-x) : (x))
 
@@ -76,19 +75,19 @@ void screen_draw_line(pos_t *p1, pos_t *p2, uint8_t *arr, int size) {
   }
 	
   // set the initial bit
-	arr[XY2OL_BYTE(p1_cpy.x, p1_cpy.y)] |= (1<<XY2OL_BIT(p1_cpy.x, p1_cpy.y));
+  set_fb_pixel(p1_cpy.x, p1_cpy.y, arr);
 
   helper = (p1_cpy.x != p2_cpy.x) || (p1_cpy.y != p2_cpy.y);
   while (helper && (tot < size)) {
 		// create the line here by stepping first horizontally, then vertically
 		for (int i = 0; i < ABS(run); i++) {
 			p1_cpy.x = (run < 0) ? (p1_cpy.x - 1) : (p1_cpy.x + 1);
-			arr[XY2OL_BYTE(p1_cpy.x, p1_cpy.y)] |= (1<<XY2OL_BIT(p1_cpy.x, p1_cpy.y));
+      set_fb_pixel(p1_cpy.x, p1_cpy.y, arr);
 		}
 
 		for (int i = 0; i < ABS(rise); i++) {
 			p1_cpy.y = (rise < 0) ? (p1_cpy.y - 1) : (p1_cpy.y + 1);
-			arr[XY2OL_BYTE(p1_cpy.x, p1_cpy.y)] |= (1<<XY2OL_BIT(p1_cpy.x, p1_cpy.y));
+      set_fb_pixel(p1_cpy.x, p1_cpy.y, arr);
 		}
 
     // recalculate helper
