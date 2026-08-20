@@ -1,0 +1,10 @@
+# editors
+*.swp
+*~
+
+# build (just in case)
+/build*/
+
+# nvim lsp stuff
+.ccls*
+compile_commands.json
