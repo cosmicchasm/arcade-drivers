@@ -19,4 +19,7 @@
 #define SCREEN_LIMIT_Y OLED_SIZE_L
 #define SCREEN_DIV 		 OLED_SCREEN_DIV
 
+__inline void set_fb_pixel(int x, int y, uint8_t *const fb);
+__inline void clr_fb_pixel(int x, int y, uint8_t *const fb);
+
 #endif
