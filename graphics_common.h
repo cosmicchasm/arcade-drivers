@@ -8,6 +8,7 @@
 #ifndef __GRAPHICS__
 #define __GRAPHICS__
 
+#include <stdint.h>
 #include "graphics_core.h"
 #include "oled_core.h"
 
@@ -19,7 +20,12 @@
 #define SCREEN_LIMIT_Y OLED_SIZE_L
 #define SCREEN_DIV 		 OLED_SCREEN_DIV
 
+#define PIX_TYPE uint8_t
+
 void set_fb_pixel(int x, int y, uint8_t *const fb);
 void clr_fb_pixel(int x, int y, uint8_t *const fb);
+
+/* glue functions for portability */
+int write_display(const uint8_t *const fb, uint32_t sz);
 
 #endif
