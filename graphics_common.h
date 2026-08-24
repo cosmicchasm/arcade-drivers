@@ -20,6 +20,8 @@
 #define SCREEN_LIMIT_Y OLED_SIZE_L
 #define SCREEN_DIV 		 OLED_SCREEN_DIV
 
+#define SCREEN_SIZE OLED_SIZE
+
 #define PIX_TYPE uint8_t
 
 void set_fb_pixel(int x, int y, uint8_t *const fb);
