@@ -39,11 +39,11 @@ void oled_init_cfg(void) {
   oled_cfg.scroll_area.no_rows_top_area = 0;
   oled_cfg.scroll_area.no_rows_scroll_area = 0;
 
-  oled_cfg.col_start_end.col_start_addr = 0;
-  oled_cfg.col_start_end.col_end_addr = 0;
+  oled_cfg.col_start_end.col_start_addr = 0X00;
+  oled_cfg.col_start_end.col_end_addr = 0X7F;
 
-  oled_cfg.page_start_end.page_start_addr = 0;
-  oled_cfg.page_start_end.page_end_addr = 0;
+  oled_cfg.page_start_end.page_start_addr = 0X00;
+  oled_cfg.page_start_end.page_end_addr = 0X07;
 
   oled_cfg.screen_on = false;
   oled_cfg.chrgpmp_on = false;
@@ -73,6 +73,7 @@ core_err_t oled_set_cfg(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
     oled_cfg.mem_mode = new_cfg->mem_mode;
   }
 
+  // TODO: add command to the message
   if (cfg_flags & SET_CVERT_MODE) {
     uint8 msg[7] = {SSD1306_ALL_CMD_BYTE, new_cfg->cvert_mode.direction,
       0X00, new_cfg->cvert_mode.start_page_addr, new_cfg->cvert_mode.frame_interval,
@@ -87,6 +88,33 @@ core_err_t oled_set_cfg(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
     oled_cfg.cvert_mode = new_cfg->cvert_mode;
   }
   
+  // TODO: add user customization to this, requires a type
+  if (cfg_flags & COL_START_END) {
+    uint8 msg[4] = {SSD1306_ALL_CMD_BYTE, SSD1306_SET_COL_ADDR_HV,
+      new_cfg->col_start_end.col_start_addr, new_cfg->col_start_end.col_end_addr};
+
+    if (0 != i2c_write_dt(shared_dev, msg, 4)) {
+      LOG_ERR("i2c_write_dt failed on line %d in function %s", __LINE__, __FUNCTION__);
+      return ERR_I2C_GENERAL;
+    }
+
+    // change the global config
+    oled_cfg.col_start_end = new_cfg->col_start_end;
+  }
+
+  if (cfg_flags & PAGE_START_END) {
+    uint8 msg[4] = {SSD1306_ALL_CMD_BYTE, SSD1306_SET_PAG_ADDR_HV,
+      new_cfg->page_start_end.page_start_addr, new_cfg->page_start_end.page_end_addr};
+
+    if (0 != i2c_write_dt(shared_dev, msg, 4)) {
+      LOG_ERR("i2c_write_dt failed on line %d in function %s", __LINE__, __FUNCTION__);
+      return ERR_I2C_GENERAL;
+    }
+
+    // change the global config
+    oled_cfg.page_start_end = new_cfg->page_start_end;
+  }
+
   if (cfg_flags & SET_MUX_RATIO) {
     // do a check of the mux ratio rq
     if (new_cfg->mux_rat >= 64) {
