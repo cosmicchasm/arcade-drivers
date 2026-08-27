@@ -238,11 +238,6 @@ core_err_t oled_init(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
     local_frame_buffer[i] = 0X00;
   }
 
-  // if (local_frame_buffer != memset((uint8_t *)local_frame_buffer, 0, sizeof(local_frame_buffer))) {
-  //     LOG_ERR("memcpy failed on line %d function %s", __LINE__, __FUNCTION__);
-  //     return ERR_I2C_GENERAL;
-  // }
-
   // initialize the global oled cfg variable
   oled_init_cfg();
 
@@ -251,7 +246,13 @@ core_err_t oled_init(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
     return ERR_I2C_NOTREADY;
   }
 
-  // initialize the global config--used for tracking
+  // power down the screen beforehand
+  if (I2C_OLED_OK != oled_pwrdn()) {
+    LOG_ERR("oled powerdown failed");
+    return ERR_I2C_GENERAL;
+  }
+
+  // initialize the oled according to new cfg
   if (NULL != new_cfg) {
     if (I2C_OLED_OK != oled_set_cfg(new_cfg, cfg_flags)) {
       return ERR_I2C_GENERAL;
@@ -264,10 +265,6 @@ core_err_t oled_init(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
 
   LOG_INF("I2C bus with address 0x%X ready", shared_dev->addr);
 
-  // powerup sequence will be a little jank here
-  // in serial mode there's no way to read! wtf?
-  // we might be able to turn on the device, then check a pin?
-  
   // do the reset operation if no auto-reset
 #if (defined(HAS_AUTO_RESET) && HAS_AUTO_RESET)
   // reset code here
@@ -277,16 +274,9 @@ core_err_t oled_init(oled_core_cfg_t *new_cfg, uint32 cfg_flags) {
   // wait a second
   k_sleep(K_MSEC(100));
 
-  // send charge pump settings
-  if (I2C_OLED_OK == oled_enable_chrgpmp()) {
-    LOG_INF("Charge pump enabled for device at address 0X%X", shared_dev->addr);
-  } else {
-    return ERR_I2C_GENERAL;
-  }
-
-  if (I2C_OLED_OK == oled_pwrp_screen()) {
-    LOG_INF("Screen enabled for device at address 0X%X", shared_dev->addr);
-  } else {
+  // pwrp
+  if (I2C_OLED_OK != oled_pwrp()) {
+    LOG_ERR("oled powerup failed");
     return ERR_I2C_GENERAL;
   }
 
@@ -333,6 +323,23 @@ core_err_t oled_pwrdn_screen(void) {
 
   // reset global config
   oled_cfg.screen_on = false;
+
+  return I2C_OLED_OK;
+}
+
+core_err_t oled_pwrp(void) {
+  // send charge pump settings
+  if (I2C_OLED_OK == oled_enable_chrgpmp()) {
+    LOG_INF("Charge pump enabled for device at address 0X%X", shared_dev->addr);
+  } else {
+    return ERR_I2C_GENERAL;
+  }
+
+  if (I2C_OLED_OK == oled_pwrp_screen()) {
+    LOG_INF("Screen enabled for device at address 0X%X", shared_dev->addr);
+  } else {
+    return ERR_I2C_GENERAL;
+  }
 
   return I2C_OLED_OK;
 }

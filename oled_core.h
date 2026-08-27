@@ -121,6 +121,7 @@ core_err_t oled_disable_chrgpmp(void);
 core_err_t oled_init(oled_core_cfg_t *new_cfg, uint32 cfg_flags);
 core_err_t oled_pwrp_screen(void);
 core_err_t oled_pwrdn_screen(void);
+core_err_t oled_pwrp(void);
 core_err_t oled_pwrdn(void);
 core_err_t oled_send_bits(const uint8 *const fb, uint32 size_buffer, uint8 col_start);
 
